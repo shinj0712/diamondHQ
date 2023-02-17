@@ -1,0 +1,36 @@
+version: '3.2'
+
+services:
+  db:
+    container_name: postgres
+    build:
+      context: .
+      dockerfile: ./docker/db/Dockerfile
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "${DB_EXPOSE_PORT:-5432}:${DB_PORT:-5432}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: ./docker/client/Dockerfile
+    volumes:
+      - ./client:/var/www/client
+    ports:
+      - "${NODE_EXPOSE_PORT:-3000}:${NODE_PORT:-3000}"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    tty: true
+
+volumes:
+  postgres_data:
+    driver: local
