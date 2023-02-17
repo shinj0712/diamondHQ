@@ -14,6 +14,7 @@ Please install the following.
 * TypeScript Importer
 * JavaScript and TypeScript Nightly
 * JSDoc Generator
+* Prisma
 ### 01. Next App
 #### ① Clone
 ```bash

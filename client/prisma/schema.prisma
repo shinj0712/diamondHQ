@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Teams テーブル
+model Team {
+  id                Int       @default(autoincrement()) @id
+  attribute_number  Int       @db.SmallInt
+  prefecture_code   String    @db.VarChar(25)
+  prefecture_name   String    @db.VarChar(5)
+  city_code         String    @db.VarChar(25)
+  city_name         String    @db.VarChar(25)
+  name              String    @db.VarChar(100)
+  name_en           String    @db.VarChar(255)
+  name_kana         String    @db.VarChar(255)
+  home_ground       String?   @db.VarChar(255)
+  slogan            String?   @db.VarChar(100)
+  introduction      String?   @db.Text
+  started_date      DateTime  @db.Date
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  deleted_at        DateTime  @db.Timestamp(0)
+}
+
+// Users テーブル
+model User {
+  id Int @default(autoincrement()) @id
+}
