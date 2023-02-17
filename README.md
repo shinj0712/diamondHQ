@@ -2,7 +2,7 @@
 baseball web manage application
 
 ## Docks
-[DiamondHQ - 野球管理アプリ](https://www.notion.so/DiamondHQ-8b0ae72882b24dcbb11198c366c07cd6)
+[DiamondHQ - 野球管理アプリ](https://www.notion.so/DiamondHQ-8b0ae72882b24dcbb11198c366c07cd6)  
 ※上記ドキュメントは現在プライベートに設定しているため、閲覧できない状態です。
 
 ## Set up
