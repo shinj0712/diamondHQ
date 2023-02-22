@@ -36,5 +36,6 @@
     "cSpell.advanced.feature.useReferenceProviderRemove": "/^#+\\s/"
   },
 
-  "nuxt.isNuxtApp": false
+  "nuxt.isNuxtApp": false,
+  "cSpell.words": ["chakra"]
 }
