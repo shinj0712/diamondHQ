@@ -8,7 +8,7 @@ import { Container } from '@chakra-ui/react';
 
 export default function Login() {
   return (
-    <Container h={100} maxW={'sm'} my={20}>
+    <Container h={100} maxW={'sm'} my={20} as='section'>
       <LoginCard />
     </Container>
   );
