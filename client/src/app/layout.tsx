@@ -8,8 +8,8 @@ import { ChakraProvider, Box } from '@chakra-ui/react';
 import { theme as customTheme } from '../styles/theme';
 
 // components
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from './header';
+import Footer from './footer';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head />
       <body>
         <ChakraProvider theme={customTheme}>
-          <Box bgGradient='linear(to-tl, orange.400, yellow.400)'>
+          <Box bgGradient='linear(to-tl, gray.200, gray.400)'>
             {/* ヘッダー */}
             <Header />
             {/* メインコンテナ */}
