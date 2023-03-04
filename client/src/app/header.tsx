@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Box,
   Flex,
   Spacer,
   Text,
+  Stack,
+  Link,
   IconButton,
   Image,
   Button,
-  useDisclosure,
   ButtonGroup,
   Drawer,
   DrawerOverlay,
@@ -17,9 +17,15 @@ import {
   DrawerFooter,
   DrawerContent,
   DrawerCloseButton,
+  useDisclosure,
+  Collapse,
 } from '@chakra-ui/react';
 
+// 定数・設定値
+import { NavItems, NavItemType as NavItemProps } from './const';
+
 // アイコン
+import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 import { MdAccountCircle, MdNotes, MdNotifications, MdLogin } from 'react-icons/md';
 import { AiFillInstagram, AiOutlineTwitter } from 'react-icons/ai';
 
@@ -27,26 +33,25 @@ export default function Header() {
   // TODO: 認証状態を保持する
   const [isGuest] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
-  console.log(router);
 
   return (
     <Box>
       {/* header logo */}
       <Flex align='space-between' w={'full'}>
         <Spacer />
-        <Text textAlign='start' fontFamily={'heading'} color='primary' p={2} fontSize={'lg'}>
+        <Text textAlign='start' fontFamily={'heading'} color='primary.500' p={2} fontSize={'lg'}>
           Diamond HQ
         </Text>
         <Spacer />
       </Flex>
 
       {/* accounts */}
-      <Box position={'absolute'} top={1} right={2}>
+      <Box position={'fixed'} top={1} right={2}>
         {isGuest ? (
           // ゲスト時
           <IconButton
             as={'a'}
+            href={'/login'}
             icon={<MdAccountCircle />}
             aria-label='guest icon'
             fontSize={32}
@@ -70,18 +75,25 @@ export default function Header() {
 
       {/* nav buttons */}
       <Box position={'fixed'} bottom={5} right={'50%'} zIndex={10} transform={'translate(50%)'}>
-        <Nav isGuest={isGuest} onOpen={onOpen} />
+        <NavButtons isGuest={isGuest} onOpen={onOpen} />
       </Box>
 
       {/* Drawer menu */}
       <Drawer isOpen={isOpen} placement='right' onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent color={'white'} bg={'gray.900'}>
-          <DrawerCloseButton />
+          {/* クローズボタン */}
+          <DrawerCloseButton _hover={{ color: 'primary.500' }} />
           {/* ドロワーヘッダー */}
           <DrawerHeader fontFamily={'heading'}>Menu</DrawerHeader>
           {/* ドロワーボディ */}
-          <DrawerBody>{/* サイトマップ */}</DrawerBody>
+          <DrawerBody>
+            <Stack color='white'>
+              {NavItems.map((item) => (
+                <AccordionMenuItem key={item.label} {...item} />
+              ))}
+            </Stack>
+          </DrawerBody>
           {/* ドロワーフッター */}
           <DrawerFooter>
             {/* SNSボタン */}
@@ -94,7 +106,7 @@ export default function Header() {
                 color={'gray.600'}
                 borderRadius='full'
                 cursor={'pointer'}
-                _hover={{ color: 'primary' }}
+                _hover={{ color: 'primary.500' }}
               />
               <IconButton
                 as='a'
@@ -104,7 +116,7 @@ export default function Header() {
                 color={'gray.600'}
                 borderRadius='full'
                 cursor={'pointer'}
-                _hover={{ color: 'primary' }}
+                _hover={{ color: 'primary.500' }}
               />
             </ButtonGroup>
           </DrawerFooter>
@@ -123,7 +135,7 @@ interface NavProps {
   onOpen: React.MouseEventHandler;
 }
 
-const Nav = ({ isGuest, onOpen }: NavProps) => {
+const NavButtons = ({ isGuest, onOpen }: NavProps) => {
   return (
     <ButtonGroup size={'md'} variant={'filled'}>
       {/* ハンバーガーメニュー */}
@@ -135,7 +147,7 @@ const Nav = ({ isGuest, onOpen }: NavProps) => {
         cursor={'pointer'}
         bg='blackAlpha.500'
         color={'gray.200'}
-        _hover={{ bg: 'primary' }}
+        _hover={{ bg: 'primary.500' }}
         onClick={onOpen}
       />
       {/* ログイン状態でメニューを分ける */}
@@ -149,69 +161,79 @@ const Nav = ({ isGuest, onOpen }: NavProps) => {
           cursor={'pointer'}
           bg='blackAlpha.500'
           color={'gray.200'}
-          _hover={{ bg: 'primary' }}
+          _hover={{ bg: 'primary.500' }}
         />
       ) : (
         // ログインボタン
         <IconButton
           icon={<MdLogin size={24} />}
           as='a'
+          href={'/login'}
           aria-label='login'
           variant={'ghost'}
           cursor={'pointer'}
           bg='blackAlpha.500'
           color={'gray.200'}
-          _hover={{ bg: 'primary' }}
+          _hover={{ bg: 'primary.500' }}
         />
       )}
     </ButtonGroup>
   );
 };
 
-interface NavItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: 'Inspiration',
-    children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Find Work',
-    children: [
-      {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#',
-      },
-      {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Learn Design',
-    href: '#',
-  },
-  {
-    label: 'Hire Designers',
-    href: '#',
-  },
-];
+/**
+ * メニューアイテム コンポーネント
+ */
+const AccordionMenuItem = ({ label, children, href }: NavItemProps) => {
+  const { isOpen, onToggle } = useDisclosure();
+  return (
+    <Stack
+      px={4}
+      py={2}
+      onClick={children && onToggle}
+      _hover={children ? { backgroundColor: 'whiteAlpha.200' } : { color: 'primary.500' }}
+    >
+      <Flex
+        as={Link}
+        href={href ?? '#'}
+        justify='space-between'
+        align='center'
+        _hover={{ textDecoration: 'none' }}
+      >
+        <Text fontWeight={700}>{label}</Text>
+        {children && isOpen ? (
+          <MinusIcon fontSize={12} />
+        ) : children && !isOpen ? (
+          <AddIcon fontSize={12} />
+        ) : (
+          <></>
+        )}
+      </Flex>
+      <Collapse in={isOpen} animateOpacity style={{ marginTop: 0 }}>
+        <Stack
+          mt={2}
+          pl={2}
+          borderLeft={1}
+          borderStyle={'solid'}
+          borderColor='white'
+          align={'start'}
+        >
+          {children &&
+            children.map((child) => (
+              <Link
+                key={child.label}
+                href={child.href}
+                py={2}
+                pl={2}
+                display='block'
+                width='100%'
+                _hover={{ textDecoration: 'none', color: 'primary.500' }}
+              >
+                {child.label}
+              </Link>
+            ))}
+        </Stack>
+      </Collapse>
+    </Stack>
+  );
+};
